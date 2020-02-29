@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<!--
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
+-->
+<title>电池的正负极 --自游网</title>
+<base href="../../../../" />
+<style>
+body{
+	margin:0;
+	padding:0;
+	border:0;
+	overflow:hidden;
+	background-color:#123F6F;
+}
+</style>
+<script>
+function write(v){
+	if(v.indexOf(window.location.host)==-1 && v.indexOf("?")==-1){
+		console.log("警告：你家网络已经被本地网络运营商加塞虚假诈骗广告！导致本游戏不能正常运行，请电话投诉!");
+		return;
+	}else{
+		document.kiswrite(v);
+	}
+}
+function loadKISScriptProcess(loaded,total)
+{
+}
+function loadKISScriptComplete()
+{
+}
+document.kiswrite = document.write;
+document.write = write;
+</script>
+<script src="js/KISCore.js"></script>
+<script src="js/KISGame.js"></script>
+<script src="js/js_KISLib/Sound.js"></script>
+
+<script src="app/kisgamefactory/j6nhnquo/电池的正负极/mole/mole.js"></script>
+<script src="app/kisgamefactory/j6nhnquo/认识电池/FatBird/FatBird.js"></script>
+<script src=""></script>
+<script src="app/kisgamefactory/j6nhnquo/电池的正负极/main.js"></script>
+<script>
+var stage;
+var project;
+var root;
+var ProjectScreenRect;
+
+function onDeviceReady(){
+	ProjectScreenRect = new kisgame.Rectangle(0,0, 1280 , 720);
+	
+	stage = new kisgame.KISWebGLStage("gameView");
+	
+	stage.setClearColor("#123F6F",1);
+	
+	root = new kisgame.KISContainer();
+	
+	stage.addChild(root);
+	
+	kisgame.Touch.enable(stage);
+	
+	var txt = root.label_txt = new kisgame.KISText();
+	txt.setTextFormat({size: "xx-large", bold: true, color: "#FFFFFF"});
+	root.addChild(txt);
+	
+	var rman = kisgame.RManager;
+	
+	var b = KISU;
+	b.md="mousedown",b.mm="mousemove",b.mu="mouseup",b.mo="mouseover",b.mt="mouseout";
+	
+	configkislib();
+	
+    if(rman.getSize()){
+		rman.addEventListener("complete", handleComplete);
+		rman.addEventListener("progress", handleProgress);
+	}else{
+		handleComplete();
+	}
+	
+	resizeWindow();
+}
+
+//播放动画声音
+function exPS(o,lib,id){
+	var et = new kisgame.Event("playsound");
+	et.data = lib.imgid+id;
+	o.dispatchEvent(et);
+}
+function playSound(name) {
+	Sound.globalPlay(kisgame.RManager.getBlobUrl(name));
+}
+function stopAllSound() {
+	Sound.stop();
+}
+function handleProgress(e) {
+    //trace((e.loaded / e.total * 100).toFixed(1) + "%");
+	var txt = root.label_txt;
+	if(txt){
+		txt.setText((e.loaded / e.total * 100).toFixed(1) + "%");
+		if(txt&&txt.parent){
+			var rt = txt.getBounds();
+			txt.move(Math.ceil((root.width - rt.width)/2),Math.ceil((root.height-rt.height)/2));
+		}
+	}
+}
+function handleComplete(e) {
+	if(e){
+		e.currentTarget.removeEventListener("complete",handleComplete);
+		e.currentTarget.removeEventListener("progress",handleProgress);
+	}
+	if(root.label_txt&&root.label_txt.parent){
+		root.label_txt.parent.removeChild(root.label_txt);
+	}
+	
+	project = runkisgame();
+	root.addChild(project);
+	resizeWindow();
+}
+
+function getStageSize() {
+    //return { width: 1136, height: 640 };//固定场景大小
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    var w = window.innerWidth || document.documentElement.clientWidth;
+    if (h <= 0) {
+        return { width: document.body.clientWidth, height: document.body.clientHeight };
+    } else {
+        return { width: w, height: h };
+    }
+}
+
+function scaleImageSize(width, height, b_width, b_height) {
+    var rw = width / b_width;
+    var rh = height / b_height;
+    var rr = width / height;
+    if (rw > rh) {
+        width = b_width;
+        height = width / rr;
+    } else if (rw < rh) {
+        height = b_height;
+        width = height * rr;
+    } else {
+        width = b_width;
+        height = b_height;
+    }
+    return new kisgame.Rectangle(0, 0, width, height);
+}
+function resizeWindow() {
+    var os = getStageSize();
+	stage.setSize(1,1);
+	var s = KISU.clone(os);
+	if(s.height>s.width){
+		s.width = os.height;
+		s.height = os.width;
+		root.rotation=90;
+		root.x = os.width;
+	}else{
+		root.rotation=0;
+		root.x = 0;
+	}
+	
+	var orect = ProjectScreenRect;
+	var rect = scaleImageSize(orect.width, orect.height, s.width, s.height);
+	var sX = rect.width / orect.width;
+	var sY = rect.height / orect.height;
+	var ex = (s.width - rect.width) / 2;
+	var ey = (s.height - rect.height) / 2;
+
+	//缩放大小root以适配窗口大小
+	
+	root.scaleX = sX;
+	root.scaleY = sY;
+	rect.width = Math.round(s.width / sX);
+	rect.height = Math.round(s.height / sY);
+	
+	if(project){
+		if (0) {
+			project.setSize(s.width, s.height);
+			//project.setSize(orect.width, orect.height);
+		} else {
+			project.setSize(rect.width, rect.height);
+		}
+	}
+	
+	root.width = rect.width;
+	root.height = rect.height;
+	
+	stage.setSize(os.width,os.height);
+	var txt = root.label_txt;
+	if(txt&&txt.parent){
+		var rt = txt.getBounds();
+		txt.move(Math.ceil((root.width - rt.width)/2),Math.ceil((root.height-rt.height)/2));
+	}
+    stage.update();
+}
+function unHandlError(e){
+	alert([e.filename,e.message,e.colno,e.lineno]);
+	if(e.error)
+	alert(dump(e.error,"",2));
+}
+document.addEventListener("touchstart", function () {return false; }, false);
+//document.addEventListener('deviceready', onDeviceReady, false);
+//document.addEventListener('backbutton', onBackKeyDown, false);
+window.addEventListener("resize", resizeWindow);
+window.addEventListener("error", unHandlError);
+
+</script>
+</head>
+<body onload="onDeviceReady()">
+<canvas id="gameView" width="1" height="1">
+	不支持HTML5 Canvas
+</canvas>
+</body>

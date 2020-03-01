@@ -147,8 +147,8 @@ function scaleImageSize(width, height, b_width, b_height) {
 function resizeWindow() {
     var os = getStageSize();
 	stage.setSize(1,1);
-	var scaleMode = "";
-	var alignMode = "";
+	var scaleMode = "EXACT_FIT_PHONE";
+	var alignMode = "TOP_LEFT";
 	var s = KISU.clone(os);
 	if(s.height>s.width && scaleMode == "EXACT_FIT_PHONE"){
 		s.width = os.height;

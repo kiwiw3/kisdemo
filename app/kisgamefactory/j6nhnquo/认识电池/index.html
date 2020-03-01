@@ -147,10 +147,8 @@ function scaleImageSize(width, height, b_width, b_height) {
 function resizeWindow() {
     var os = getStageSize();
 	stage.setSize(1,1);
-	var scaleMode = "EXACT_FIT_PHONE";
-	var alignMode = "TOP_LEFT";
 	var s = KISU.clone(os);
-	if(s.height>s.width && scaleMode == "EXACT_FIT_PHONE"){
+	if(s.height>s.width){
 		s.width = os.height;
 		s.height = os.width;
 		root.rotation=90;
@@ -161,40 +159,26 @@ function resizeWindow() {
 	}
 	
 	var orect = ProjectScreenRect;
-	var rect = orect;
-	var sX=1,sY=1,ex=0,ey=0;
-	if(scaleMode != "NO_SCALE"){
-		if (scaleMode != "FULL_SCREEN") {
-			rect = scaleImageSize(orect.width, orect.height, s.width, s.height);
-			sX = rect.width / orect.width;
-			sY = rect.height / orect.height;
-			if(alignMode == "CENTER")
-			{
-				ex = (s.width - rect.width) / 2;
-				ey = (s.height - rect.height) / 2;
-				rect.width = orect.width;
-				rect.height = orect.height;
-			}else{
-				rect.width = Math.round(s.width / sX);
-				rect.height = Math.round(s.height / sY);
-			}
-		}else{
-			sX = s.width/orect.width;
-			sY = s.height/orect.height;
-		}
-	}else{
-		ex = (s.width-rect.width)/2
-		ey = (s.height-rect.height)/2
-	}
-	root.x = ex;
-	root.y = ey;
+	var rect = scaleImageSize(orect.width, orect.height, s.width, s.height);
+	var sX = rect.width / orect.width;
+	var sY = rect.height / orect.height;
+	var ex = (s.width - rect.width) / 2;
+	var ey = (s.height - rect.height) / 2;
+
+	//缩放大小root以适配窗口大小
+	
 	root.scaleX = sX;
 	root.scaleY = sY;
-	root.width = rect.width;
-	root.height = rect.height;
+	rect.width = Math.round(s.width / sX);
+	rect.height = Math.round(s.height / sY);
 	
 	if(project){
-		project.setSize(rect.width, rect.height);
+		if (0) {
+			project.setSize(s.width, s.height);
+			//project.setSize(orect.width, orect.height);
+		} else {
+			project.setSize(rect.width, rect.height);
+		}
 	}
 	
 	root.width = rect.width;
